@@ -11,16 +11,24 @@ login = LoginManager(app)
 
 @login.user_loader
 def load_user(l_id):
-    return Session.get(User, int(l_id))
+    return entity.Session.get(user.User, int(l_id))
 
 
-@app.route("/api/login", methods=['GET', 'POST'])
+@app.route("/api/login", methods=['GET'])
 def login():
     if current_user.is_authenticated:
         return flask.redirect("/")
-    # form = LoginForm()
-    # if form.validate_on_submit():
-    #     pass
+    username = flask.request.json.get('username')
+    password = flask.request.json.get('password')
+    if username is None or password is None:
+        return flask.abort(400, description="Password or Username is incorrect")
+    the_user = user.User.query.filter_by(username=username).first()
+    if the_user is not None:
+        if the_user is None or not the_user.check_password(password):
+            return flask.abort(400, description="Password or Username is incorrect")
+        login_user(the_user)
+        return flask.jsonfiy({username: the_user.username}), 200
+    return flask.abort(400, description="Password or Username is incorrect")
 
 
 @app.route('/api/logout')
@@ -35,11 +43,11 @@ def register_user():
     password = flask.request.json.get('password')
     if username is None or password is None:
         flask.abort(400)
-    if User.query.filter_by(username=username).first() is not None:
+    if user.User.query.filter_by(username=username).first() is not None:
         flask.abort(400)
-    new_user = User(l_username=username)
+    new_user = user.User(l_username=username)
     new_user.set_password(password)
-    Session.add(new_user)
-    Session.commit()
+    entity.Session.add(new_user)
+    entity.Session.commit()
     return (flask.jsonify({'username': new_user.username}), 201,
             {'Location': flask.url_for('get_user', id=new_user.id, _external=True)})
