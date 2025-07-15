@@ -1,10 +1,7 @@
-export class User {
-  constructor(
-    public _id : number,
-    public first_name : string,
-    public surname : string,
-    public _password : string
-    ) {
-  }
-
+export interface IUser {
+  id : number;
+  username : string;
+  _password : string;
 }
+
+export type NewUser = Omit<IUser, 'id'> & {id: null};
