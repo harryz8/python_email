@@ -1,29 +1,34 @@
 
 import src.entities.entity
-from sqlalchemy import Column, String
+from sqlalchemy import Column, String, Integer
 from marshmallow import Schema, fields
 from flask_login import UserMixin
 import hashlib
 
 
 class User(UserMixin, src.entities.entity.Entity, src.entities.entity.Base):
-    __tablename__ = 'user'
+    __tablename__ = 'users'
+    id = Column(Integer, primary_key=True, autoincrement=True)
     username = Column(String)
     password_hash = Column(String)
 
-    def __init__(self, l_username, l_password_hash=""):
-        src.entities.entity.Entity.__init__(self)
-        self.username = l_username
-        self.password_hash = l_password_hash
-
     def set_password(self, password):
-        self.password_hash = hashlib.sha256(bytes(password)).hexdigest()
+        self.password_hash = hashlib.sha256(password.encode('utf-8')).hexdigest()
 
     def check_password(self, password):
-        return self.password_hash == hashlib.sha256(bytes(password)).hexdigest()
+        return self.password_hash == hashlib.sha256(password.encode('utf-8')).hexdigest()
 
 
 class UserSchema(Schema):
-    id = fields.Number()
+    id = fields.Integer()
     username = fields.String()
-    password_hash = fields.String()
+    password = fields.String()
+
+class SecureUser():
+    id = 0
+    username = ''
+    password = ''
+    def __init__(self, user : User):
+        self.id = user.id
+        self.username = user.username
+        self.password = ''

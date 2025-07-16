@@ -1,23 +1,33 @@
-import { Component } from '@angular/core';
-import { NewUser } from '../entities/user/user.model';
+import { Component, inject } from '@angular/core';
+import { IUser, NewUser } from '../entities/user/user.model';
 import { FormsModule } from '@angular/forms';
 import { JsonPipe } from '@angular/common'
+import { UserAPI } from '../entities/user/user-api.service';
+import { finalize, Observable } from 'rxjs';
+import { HttpResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
   standalone: true,
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
-  imports: [FormsModule, JsonPipe]
+  imports: [FormsModule]
 })
 export class LoginComponent {
 
-  model : NewUser = {username: "", _password: "", id: null}
+  model : NewUser = {username: "", password: "", id: null}
   submitted = false;
+  userAPI = inject(UserAPI);
 
   onSubmit() {
-    alert("submit")
-    this.submitted = true;
+    this.subscribeToSaveResponse(this.userAPI.registerUser(this.model));
+  }
+
+  private subscribeToSaveResponse(result : Observable<HttpResponse<IUser>>) : void {
+    result.pipe(finalize(() => this.submitted = true)).subscribe({
+      next: () => alert("Done"),
+      error: () => alert("Non"),
+    });
   }
 
 }

@@ -1,33 +1,37 @@
 import flask
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 from flask_login import LoginManager, current_user, logout_user, login_user
-from src.entities import entity, user
+from src.entities import user, entity
 
 app = flask.Flask(__name__)
 
 CORS(app)
 login = LoginManager(app)
 
+entity.Base.metadata.create_all(entity.engine)
+
 
 @login.user_loader
 def load_user(l_id):
-    return entity.Session.get(user.User, int(l_id))
+    session = entity.Session()
+    return session.get(user.User, int(l_id))
 
 
-@app.route("/api/login", methods=['GET'])
+@app.route("/api/login", methods=['POST'])
 def login():
+    session = entity.Session()
     if current_user.is_authenticated:
         return flask.redirect("/")
     username = flask.request.json.get('username')
     password = flask.request.json.get('password')
     if username is None or password is None:
         return flask.abort(400, description="Password or Username is incorrect")
-    the_user = user.User.query.filter_by(username=username).first()
+    the_user = session.query(user.User).filter_by(username=username).first()
     if the_user is not None:
         if the_user is None or not the_user.check_password(password):
             return flask.abort(400, description="Password or Username is incorrect")
         login_user(the_user)
-        return flask.jsonfiy({username: the_user.username}), 200
+        return (flask.jsonfiy({username: the_user.username}), 200)
     return flask.abort(400, description="Password or Username is incorrect")
 
 
@@ -36,18 +40,25 @@ def logout():
     logout_user()
     return flask.redirect('/')
 
-
-@app.route('/api/register_user')
+@app.route('/api/register-user', methods=['POST'])
 def register_user():
-    username = flask.request.json.get('username')
-    password = flask.request.json.get('password')
-    if username is None or password is None:
-        flask.abort(400)
-    if user.User.query.filter_by(username=username).first() is not None:
-        flask.abort(400)
-    new_user = user.User(l_username=username)
-    new_user.set_password(password)
-    entity.Session.add(new_user)
-    entity.Session.commit()
-    return (flask.jsonify({'username': new_user.username}), 201,
-            {'Location': flask.url_for('get_user', id=new_user.id, _external=True)})
+    session = entity.Session()
+    json = flask.request.get_json()
+    if json['id'] == None:
+        json['id'] = 0
+    else:
+        flask.abort(400, description="ID shouldn't be provided")
+    posted_user = user.UserSchema().load(json)
+    if posted_user['username'] is None or posted_user['password'] is None:
+        flask.abort(400, description="Username or Password is missing.")
+    if session.query(user.User).filter_by(username=posted_user['username']).first() is not None:
+        flask.abort(400, description="Username is taken.")
+    new_user = user.User()
+    new_user.username = posted_user['username']
+    new_user.set_password(posted_user['password'])
+    session.add(new_user)
+    session.commit()
+    send_new_user = user.UserSchema().dump(user.SecureUser(new_user))
+    print(send_new_user)
+    session.close()
+    return (flask.jsonify(send_new_user), 201)
