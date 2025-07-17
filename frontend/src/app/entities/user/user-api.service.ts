@@ -18,4 +18,8 @@ export class UserAPI {
     return this.http.post<IUser>(`${API_URL}/api/register-user`, new_user, { observe: 'response' })
   }
 
+  loginUser(new_user : NewUser | IUser): Observable<HttpResponse<IUser>> {
+    return this.http.post<IUser>(`${API_URL}/api/login`, new_user, { observe: 'response' })
+  }
+
 }

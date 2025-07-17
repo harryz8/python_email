@@ -22,16 +22,17 @@ def login():
     session = entity.Session()
     if current_user.is_authenticated:
         return flask.redirect("/")
-    username = flask.request.json.get('username')
-    password = flask.request.json.get('password')
-    if username is None or password is None:
+    json = flask.request.get_json()
+    posted_user = user.UserSchema().load(json)
+    if posted_user['username'] is None or posted_user['password'] is None:
         return flask.abort(400, description="Password or Username is incorrect")
-    the_user = session.query(user.User).filter_by(username=username).first()
+    the_user = session.query(user.User).filter_by(username=posted_user['username']).first()
     if the_user is not None:
-        if the_user is None or not the_user.check_password(password):
+        if the_user is None or not the_user.check_password(posted_user['password']):
             return flask.abort(400, description="Password or Username is incorrect")
         login_user(the_user)
-        return (flask.jsonfiy({username: the_user.username}), 200)
+        send_the_user = user.UserSchema().dump(user.SecureUser(the_user))
+        return (flask.jsonfiy(send_the_user), 200)
     return flask.abort(400, description="Password or Username is incorrect")
 
 
@@ -39,6 +40,7 @@ def login():
 def logout():
     logout_user()
     return flask.redirect('/')
+
 
 @app.route('/api/register-user', methods=['POST'])
 def register_user():
@@ -56,9 +58,13 @@ def register_user():
     new_user = user.User()
     new_user.username = posted_user['username']
     new_user.set_password(posted_user['password'])
+    new_user.email_address = posted_user['email_address']
+    new_user.email_password = posted_user['email_password']
+    new_user.smtp_server = posted_user['smtp_server']
+    new_user.smtp_port = posted_user['smtp_port']
+    new_user.imap_server = posted_user['imap_server']
     session.add(new_user)
     session.commit()
     send_new_user = user.UserSchema().dump(user.SecureUser(new_user))
-    print(send_new_user)
     session.close()
     return (flask.jsonify(send_new_user), 201)

@@ -1,0 +1,24 @@
+<form #registerForm="ngForm" (ngSubmit)="onSubmit()">
+    <label for="username">Username:</label>
+    <input [(ngModel)]="model.username" type="text" id="username" name="username" />
+    <br />
+    <label for="password">Password:</label>
+    <input [(ngModel)]="model.password" type="text" id="password" name="password" />
+    <br />
+    <label for="email">Email address:</label>
+    <input [(ngModel)]="model.email_address" type="text" id="email" name="email" />
+    <br />
+    <label for="email_password">Email Password:</label>
+    <input [(ngModel)]="model.email_password" type="text" id="email_password" name="email_password" />
+    <br />
+    <label for="smtp_server">SMTP Server:</label>
+    <input [(ngModel)]="model.smtp_server" type="text" id="smtp_server" name="smtp_server" />
+    <br />
+    <label for="smtp_port">SMTP Port:</label>
+    <input [(ngModel)]="model.smtp_port" type="number" id="smtp_port" name="smtp_port" />
+    <br />
+    <label for="imap_server">IMAP Server:</label>
+    <input [(ngModel)]="model.imap_server" type="text" id="imap_server" name="imap_server" />
+    <br />
+    <button type="submit" class="btn btn-success" [disabled]="!registerForm.form.valid">Submit</button>
+</form>
