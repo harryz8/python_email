@@ -7,6 +7,7 @@ app = flask.Flask(__name__)
 
 CORS(app)
 login = LoginManager(app)
+app.config['SECRET_KEY'] = 'aSecretKey'
 
 entity.Base.metadata.create_all(entity.engine)
 
@@ -23,6 +24,8 @@ def login():
     if current_user.is_authenticated:
         return flask.redirect("/")
     json = flask.request.get_json()
+    if json['id'] == None:
+        json['id'] = 0
     posted_user = user.UserSchema().load(json)
     if posted_user['username'] is None or posted_user['password'] is None:
         return flask.abort(400, description="Password or Username is incorrect")
@@ -32,7 +35,7 @@ def login():
             return flask.abort(400, description="Password or Username is incorrect")
         login_user(the_user)
         send_the_user = user.UserSchema().dump(user.SecureUser(the_user))
-        return (flask.jsonfiy(send_the_user), 200)
+        return (flask.jsonify(send_the_user), 200)
     return flask.abort(400, description="Password or Username is incorrect")
 
 

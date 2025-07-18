@@ -4,10 +4,9 @@ docker run --name email-app \
     -e POSTGRES_PASSWORD=cat \
     -d postgres > database.txt
 echo "Database up"
-sleep 2
+sleep 4
 cd backend/
-./bootstrap.sh &
-echo $! > ../backend.txt
+./bootstrap.sh
 echo "Backend up"
 cd ../
 cd frontend/

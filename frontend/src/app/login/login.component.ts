@@ -25,8 +25,8 @@ export class LoginComponent {
 
   private subscribeToSaveResponse(result : Observable<HttpResponse<IUser>>) : void {
     result.pipe(finalize(() => this.submitted = true)).subscribe({
-      next: () => alert("Done"),
-      error: () => alert("Error"),
+      next: cur_user => alert(`Welcome ${cur_user.body?.username}`),
+      error: () => alert("Please check your username or password."),
     });
   }
 
