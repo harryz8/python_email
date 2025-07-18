@@ -42,7 +42,6 @@ class Mail:
             for each_tuple in data:
                 if isinstance(each_tuple, tuple):
                     msg = email.message_from_bytes(each_tuple[1])
-                    print(msg['Subject'])
                     msg_body: str = ''
                     if msg.is_multipart():
                         for part in msg.get_payload():
