@@ -1,6 +1,7 @@
 import smtplib
 import email
 import imaplib
+from src.entities import email_obj
 
 class Mail:
     _email_add = ""
@@ -16,6 +17,7 @@ class Mail:
         self._smtp_port = smtp_port
         self._imap_server = imap_server
 
+
     def send(self, to_email : list[str], subject : str, body : str):
         for i in to_email:
             msg = email.message.EmailMesssage()
@@ -28,8 +30,9 @@ class Mail:
                 send_device.send_message(msg)
                 send_device.quit()
 
-    def load_folder(self, folder: str = "inbox") -> list[tuple[str, email.message.Message]]:
-        emails: list[tuple[str, email.message.Message]] = []
+
+    def load_folder(self, folder: str = "inbox", limit : int | None = None) -> list[email_obj.Email]:
+        emails: list[email_obj.Email] = []
         mail = imaplib.IMAP4_SSL(self._imap_server)
         mail.login(self._email_add, self._password)
         mail.select(folder)
@@ -37,6 +40,8 @@ class Mail:
         mail_ids = []
         for block in data:
             mail_ids += block.split()
+        if (limit != None):
+            mail_ids = mail_ids[0:limit]
         for id_each in mail_ids:
             status, data = mail.fetch(id_each, '(RFC822)') #'(RFC822)' is the whole raw message
             for each_tuple in data:
@@ -49,11 +54,12 @@ class Mail:
                                 msg_body += part.get_payload()
                     else:
                         msg_body = msg.get_payload()
-                    emails.append((msg_body, msg))
+                    emails.append(email_obj.Email(msg_body, msg))
 
         return emails
 
 
 if __name__ == "__main__":
     d = Mail("dh", "rzrm m_z_ __wz e_ur ", "smtp.gmail.com", 465, "imap.gmail.com")
-    d.load_folder()
+    emails = d.load_folder(limit=2)
+    print(emails[1].subject)

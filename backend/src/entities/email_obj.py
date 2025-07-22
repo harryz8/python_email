@@ -9,9 +9,12 @@ class EmailSchema(Schema):
 
 
 class Email():
-    email_from, email_to, subject, content = None
-    def __init__(l_email : email.message.Message):
-        email_from = l_email['From']
-        email_to = l_email['To']
-        subject = l_email['Subject']
-        content = l_email.get_content()
+    email_from = None
+    email_to = None 
+    subject = None
+    content = None
+    def __init__(self, l_content : str, l_email : email.message.Message):
+        self.email_from = l_email['From']
+        self.email_to = l_email['To']
+        self.subject = l_email['Subject']
+        self.content = l_content

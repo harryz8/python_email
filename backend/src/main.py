@@ -1,9 +1,8 @@
 import flask
 from flask_cors import CORS, cross_origin
 from flask_login import LoginManager, current_user, logout_user, login_user, login_required
-from src.entities import user, entity
-from mail import Mail
-import email_obj
+from src.entities import user, entity, email_obj
+from .mail import Mail
 
 app = flask.Flask(__name__)
 
@@ -77,17 +76,17 @@ def register_user():
     session.add(new_user)
     session.commit()
     send_new_user = user.UserSchema().dump(user.SecureUser(new_user))
+    print(f"ID: {new_user.id}")
     session.close()
     return (flask.jsonify(send_new_user), 201)
 
 
-@app.route('api/load-emails/<user_id>', methods=['GET'])
-@login_required
+@app.route('/api/load-emails/<user_id>', methods=['GET'])
+#@login_required
 def get_all_emails(user_id=0):
     session = entity.Session()
     the_user = session.query(user.User).filter_by(id=user_id).first()
     mail_manager = Mail(the_user.email_address, the_user.email_password, the_user.smtp_server, the_user.smtp_port, the_user.imap_server)
-    mail_list = mail_manager.load_folder("inbox")
-    email_obj_list = [email_obj.Email(msg) for [body, msg] in mail_list]
-    for email_obj_each in email_obj_list:
-        print(email_obj_each.get_content())
+    mail_list = mail_manager.load_folder("inbox", limit=10)
+    send_email_list = [email_obj.EmailSchema().dump(single_mail) for single_mail in mail_list]
+    return flask.jsonify(send_email_list, 200)
