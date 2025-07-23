@@ -81,12 +81,12 @@ def register_user():
     return (flask.jsonify(send_new_user), 201)
 
 
-@app.route('/api/load-emails/<user_id>', methods=['GET'])
-#@login_required
-def get_all_emails(user_id=0):
+@app.route('/api/load-emails/<folder>', methods=['GET'])
+@login_required
+def get_all_emails(folder="inbox"):
     session = entity.Session()
-    the_user = session.query(user.User).filter_by(id=user_id).first()
+    the_user = session.query(user.User).filter_by(id=current_user.id).first()
     mail_manager = Mail(the_user.email_address, the_user.email_password, the_user.smtp_server, the_user.smtp_port, the_user.imap_server)
-    mail_list = mail_manager.load_folder("inbox", limit=10)
+    mail_list = mail_manager.load_folder(folder, limit=10)
     send_email_list = [email_obj.EmailSchema().dump(single_mail) for single_mail in mail_list]
-    return flask.jsonify(send_email_list, 200)
+    return (flask.jsonify(send_email_list), 200)

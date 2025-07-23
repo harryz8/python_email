@@ -55,7 +55,6 @@ class Mail:
                     else:
                         msg_body = msg.get_payload()
                     emails.append(email_obj.Email(msg_body, msg))
-
         return emails
 
 

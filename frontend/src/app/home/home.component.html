@@ -1,0 +1,7 @@
+@if (this.currentUser) {
+    <app-inbox-test></app-inbox-test>
+}
+@else {
+    <app-login></app-login>
+    Or <a [routerLink]="['register']">Register</a>
+}
