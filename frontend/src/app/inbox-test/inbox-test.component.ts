@@ -1,4 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
+import { UserService } from '../services/user/user.service';
+import { MailAPI } from '../entities/mail/mail-api.service';
+import { IMail } from '../entities/mail/mail.model';
 
 @Component({
   selector: 'app-inbox-test',
@@ -7,6 +10,14 @@ import { Component } from '@angular/core';
   templateUrl: './inbox-test.component.html',
   styleUrl: './inbox-test.component.scss'
 })
-export class InboxTestComponent {
+export class InboxTestComponent implements OnInit {
+
+  mailService = inject(MailAPI);
+
+  inbox : IMail[] | null = null;
+
+  ngOnInit(): void {
+      this.mailService.getFolder("inbox").subscribe(mail => this.inbox=mail.body!);
+  }
 
 }

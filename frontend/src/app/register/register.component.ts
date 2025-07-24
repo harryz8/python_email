@@ -24,7 +24,7 @@ export class RegisterComponent {
 
   private subscribeToSaveResponse(result : Observable<HttpResponse<IUser>>) : void {
     result.pipe(finalize(() => this.submitted = true)).subscribe({
-      next: () => alert("Done"),
+      next: () => history.back(),
       error: () => alert("Error"),
     });
   }

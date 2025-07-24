@@ -1,12 +1,23 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable, OnInit } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { API_URL } from '../../env';
 import { Observable, throwError } from 'rxjs';
 import { IMail } from './mail.model';
+import { UserService } from '../../services/user/user.service';
+import { IUser } from '../user/user.model';
 
 @Injectable({providedIn: 'root'})
-export class UserAPI {
+export class MailAPI implements OnInit {
+
+  userService = inject(UserService);
+
+  curUser : IUser | null = null;
+
   constructor(private http : HttpClient) {
+  }
+
+  ngOnInit(): void {
+      this.userService.currentUser.subscribe(theUser => this.curUser = theUser);
   }
 
   private static _handleError(err: HttpErrorResponse | any) {
@@ -15,7 +26,7 @@ export class UserAPI {
   }
 
   getFolder(folder : string) : Observable<HttpResponse<IMail[]>> {
-    return this.http.get<IMail[]>(`${API_URL}/api/load-emails/${folder}`, {observe: 'response'})
+    return this.http.post<IMail[]>(`${API_URL}/api/load-emails/${folder}`, {username : this.curUser?.username, password : this.curUser?.password}, {observe: 'response', withCredentials: true})
     .pipe()
   }
 

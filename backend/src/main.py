@@ -1,30 +1,41 @@
 import flask
 from flask_cors import CORS, cross_origin
-from flask_login import LoginManager, current_user, logout_user, login_user, login_required
 from src.entities import user, entity, email_obj
 from .mail import Mail
+import datetime
+from flask_httpauth import HTTPBasicAuth
 
 app = flask.Flask(__name__)
 
-CORS(app)
-login = LoginManager(app)
+CORS(app, supports_credentials=True, origins=['http://localhost:4200'])
+
+auth = HTTPBasicAuth()
 app.config['SECRET_KEY'] = 'aSecretKey'
 
 entity.Base.metadata.create_all(entity.engine)
 
 
-@login.user_loader
-def load_user(l_id):
+@auth.verify_password
+def verify_password(l_username, l_password):
     session = entity.Session()
-    return session.get(user.User, int(l_id))
+    if l_username is None or l_password is None:
+        session.close()
+        return False
+    the_user = session.query(user.User).filter_by(username=l_username).first()
+    if the_user is not None:
+        if not the_user.check_password(l_password):
+            session.close()
+            return False
+        session.close()
+        return True
+    session.close()
+    return False
 
 
 @app.route("/api/login", methods=['POST'])
 def login():
+    expiration = datetime.datetime.now() + datetime.timedelta(days = 30)
     session = entity.Session()
-    if current_user.is_authenticated:
-        session.close()
-        return flask.redirect("/")
     json = flask.request.get_json()
     if json['id'] == None:
         json['id'] = 0
@@ -37,19 +48,11 @@ def login():
         if the_user is None or not the_user.check_password(posted_user['password']):
             session.close()
             return flask.abort(400, description="Password or Username is incorrect")
-        login_user(the_user)
         send_the_user = user.UserSchema().dump(user.SecureUser(the_user))
         session.close()
         return (flask.jsonify(send_the_user), 200)
     session.close()
     return flask.abort(400, description="Password or Username is incorrect")
-
-
-@app.route('/api/logout')
-@login_required
-def logout():
-    logout_user()
-    return flask.redirect('/')
 
 
 @app.route('/api/register-user', methods=['POST'])
@@ -81,8 +84,8 @@ def register_user():
     return (flask.jsonify(send_new_user), 201)
 
 
-@app.route('/api/load-emails/<folder>', methods=['GET'])
-@login_required
+@app.route('/api/load-emails/<folder>', methods=['POST'])
+@auth.login_required
 def get_all_emails(folder="inbox"):
     session = entity.Session()
     the_user = session.query(user.User).filter_by(id=current_user.id).first()
