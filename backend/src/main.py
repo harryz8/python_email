@@ -29,7 +29,7 @@ def login():
     expiration = datetime.datetime.now() + datetime.timedelta(days = 30)
     session = entity.Session()
     json = flask.request.get_json()
-    if json['id'] == None:
+    if 'id' in json:
         json['id'] = 0
     posted_user = user.UserSchema().load(json)
     if posted_user['username'] is None or posted_user['password'] is None:
@@ -86,7 +86,7 @@ def register_user():
     return (flask.jsonify(send_new_user), 201)
 
 
-@app.route('/api/load-emails/<folder>', methods=['POST'])
+@app.route('/api/load-emails/<folder>', methods=['GET'])
 @jwt_required()
 def get_all_emails(folder="inbox"):
     session = entity.Session()

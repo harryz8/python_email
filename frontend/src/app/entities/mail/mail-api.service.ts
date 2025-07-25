@@ -27,7 +27,7 @@ export class MailAPI implements OnInit {
 
   getFolder(folder : string) : Observable<HttpResponse<IMail[]>> {
     let the_token = localStorage.getItem("token");
-    if (the_token != null) {
+    if (the_token == null) {
       the_token = "";
     }
     return this.http.get<IMail[]>(`${API_URL}/api/load-emails/${folder}`, {observe: 'response', withCredentials: true, headers: new HttpHeaders({
