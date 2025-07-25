@@ -3,6 +3,7 @@ from flask_cors import CORS, cross_origin
 from flask_login import login_user, logout_user, current_user
 from src.entities import user, entity, email_obj
 from .mail import Mail
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity, get_jwt
 import datetime
 
 app = flask.Flask(__name__)
@@ -10,8 +11,17 @@ app = flask.Flask(__name__)
 CORS(app, supports_credentials=True, origins=['http://localhost:4200'])
 
 app.config['SECRET_KEY'] = 'aSecretKey'
+interface = JWTManager(app)
 
 entity.Base.metadata.create_all(entity.engine)
+
+revoked_tokens = []
+
+
+@interface.token_in_blocklist_loader
+def check_if_token_revoked(jwt_header, jwt_payload):
+    jti = jwt_payload['jti']
+    return jti in revoked_tokens
 
 
 @app.route("/api/login", methods=['POST'])
@@ -30,19 +40,21 @@ def login():
         if the_user is None or not the_user.check_password(posted_user['password']):
             session.close()
             return flask.abort(400, description="Password or Username is incorrect")
-        login_user(the_user)
-        send_the_user = user.UserSchema().dump(user.SecureUser(the_user))
+        token = create_access_token(identity=the_user.id)
+        response = {'message': 'Login successful', 'user_id': the_user.id, 'status': 200, 'token': token}
+        #send_the_user = user.UserSchema().dump(user.SecureUser(the_user))
         session.close()
-        return (flask.jsonify(send_the_user), 200)
+        return flask.jsonify(response)
     session.close()
     return flask.abort(400, description="Password or Username is incorrect")
 
 
-@app.route('/api/logout')
+@app.route('/api/logout', methods=["POST"])
+@jwt_required()
 def logout():
-    if (current_user != None):
-        logout_user()
-    return flask.redirect('/')
+    jti = get_jwt()['jti']
+    revoked_tokens.append(jti)
+    return flask.jsonify(msg="Token revoked")
 
 
 @app.route('/api/register-user', methods=['POST'])
@@ -75,9 +87,10 @@ def register_user():
 
 
 @app.route('/api/load-emails/<folder>', methods=['POST'])
+@jwt_required()
 def get_all_emails(folder="inbox"):
     session = entity.Session()
-    the_user = session.query(user.User).filter_by(id=current_user.id).first()
+    the_user = session.query(user.User).filter_by(id=get_jwt_identity()).first()
     mail_manager = Mail(the_user.email_address, the_user.email_password, the_user.smtp_server, the_user.smtp_port, the_user.imap_server)
     mail_list = mail_manager.load_folder(folder, limit=10)
     send_email_list = [email_obj.EmailSchema().dump(single_mail) for single_mail in mail_list]
