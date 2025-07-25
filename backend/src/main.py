@@ -41,8 +41,8 @@ def login():
             session.close()
             return flask.abort(400, description="Password or Username is incorrect")
         token = create_access_token(identity=the_user.id)
-        response = {'message': 'Login successful', 'user_id': the_user.id, 'status': 200, 'token': token}
-        #send_the_user = user.UserSchema().dump(user.SecureUser(the_user))
+        send_the_user = user.UserSchema().dump(user.SecureUser(the_user))
+        response = {'message': 'Login successful', 'user_id': the_user.id, 'status': 200, 'token': token, 'user': send_the_user}
         session.close()
         return flask.jsonify(response)
     session.close()

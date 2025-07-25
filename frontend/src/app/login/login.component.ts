@@ -22,20 +22,19 @@ export class LoginComponent {
   userService = inject(UserService);
 
   onSubmit() {
-    this.subscribeToSaveResponse(this.userAPI.loginUser(this.model), this.model.password);
+    this.subscribeToSaveResponse(this.userAPI.loginUser(this.model));
   }
 
-  private subscribeToSaveResponse(result : Observable<HttpResponse<IUser>>, password : string) : void {
+  private subscribeToSaveResponse(result : Observable<HttpResponse<IUser>>) : void {
     result.pipe(finalize(() => this.submitted = true)).subscribe({
-      next: cur_user => this.loginUser(cur_user.body!, password),
+      next: response => this.loginUser(response.body!),
       error: () => alert("Please check your username or password."),
     });
   }
 
-  loginUser(user : IUser, password : string) : void {
-    alert(`Welcome ${user.username}`);
-    user.password = password;
-    this.userService.setCurrentUser(user);
+  loginUser(response : any) : void {
+    localStorage.setItem('token', response['token']);
+    this.userService.setCurrentUser(response['user'] as IUser);
   }
 
 }

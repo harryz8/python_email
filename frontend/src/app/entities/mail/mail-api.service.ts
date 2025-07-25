@@ -1,5 +1,5 @@
 import { inject, Injectable, OnInit } from '@angular/core';
-import { HttpClient, HttpErrorResponse, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { API_URL } from '../../env';
 import { Observable, throwError } from 'rxjs';
 import { IMail } from './mail.model';
@@ -26,8 +26,14 @@ export class MailAPI implements OnInit {
   }
 
   getFolder(folder : string) : Observable<HttpResponse<IMail[]>> {
-    return this.http.post<IMail[]>(`${API_URL}/api/load-emails/${folder}`, {username : this.curUser?.username, password : this.curUser?.password}, {observe: 'response', withCredentials: true})
-    .pipe()
+    let the_token = localStorage.getItem("token");
+    if (the_token != null) {
+      the_token = "";
+    }
+    return this.http.get<IMail[]>(`${API_URL}/api/load-emails/${folder}`, {observe: 'response', withCredentials: true, headers: new HttpHeaders({
+      Authorization: `Bearer ${the_token}`
+    })})
+    .pipe();
   }
 
 }
