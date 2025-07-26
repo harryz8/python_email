@@ -1,13 +1,31 @@
-<h2>Inbox</h2>
-<div id="inbox_div">
-    @for (mail of inbox; track mail) {
-        <div class="email">
-            <h4>{{ mail.subject }}</h4>
-            <p>To: {{ mail.email_to }}</p>
-            <p>From: {{ mail.email_from }}</p>
-            <br />
-            <div class="overflow-y-scroll content-outer"><div class="overflow-y-scroll" [innerHTML]="mail.content"></div></div>
-            <br />
+<div class="container-fluid w-100 h-100" id="inbox-test">
+    <div class="row w-100 h-100">
+        <div class="col-2 it_sidebar">
+            <h1>
+                @if (this.the_user) {
+                    {{ the_user.username }}'s 
+                }Inbox
+            </h1>
         </div>
-    }
+        @if (this.isLoading === true) {
+            <div class="col-10 loading_div">
+                <h4>Loading... Please Wait</h4>
+            </div>
+        }
+        @else {
+            <div class="col-10 inbox-outer">
+                <div id="inbox_div">
+                    @for (mail of inbox; track mail) {
+                        <div class="email">
+                            <h4>{{ mail.subject }}</h4>
+                            <p>To: {{ mail.email_to }}</p>
+                            <p>From: {{ mail.email_from }}</p>
+                            <hr />
+                            <div class="content-outer"><div class="content-inner" [innerHTML]="mail.content"></div></div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
 </div>

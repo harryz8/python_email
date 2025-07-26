@@ -1,2 +1,14 @@
 @import url('https://unpkg.com/bootstrap@3.3.7/dist/css/bootstrap.min.css');
 /* You can add global styles to this file, and also import other style files */
+
+/* Importing Bootstrap SCSS file. */
+@import 'bootstrap/scss/bootstrap';
+
+.loading_div {
+    background-color: rgb(121, 32, 0);
+    color: white;
+    border-radius: 1em;
+    margin: 2em;
+    padding: 2em;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px; //https://getcssscan.com/css-box-shadow-examples #3
+}

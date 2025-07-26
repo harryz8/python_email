@@ -1,6 +1,5 @@
 import flask
-from flask_cors import CORS, cross_origin
-from flask_login import login_user, logout_user, current_user
+from flask_cors import CORS
 from src.entities import user, entity, email_obj
 from .mail import Mail
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity, get_jwt
@@ -9,7 +8,6 @@ import datetime
 app = flask.Flask(__name__)
 
 CORS(app, supports_credentials=True, origins=['http://localhost:4200'])
-
 app.config['SECRET_KEY'] = 'aSecretKey'
 interface = JWTManager(app)
 
@@ -92,6 +90,6 @@ def get_all_emails(folder="inbox"):
     session = entity.Session()
     the_user = session.query(user.User).filter_by(id=get_jwt_identity()).first()
     mail_manager = Mail(the_user.email_address, the_user.email_password, the_user.smtp_server, the_user.smtp_port, the_user.imap_server)
-    mail_list = mail_manager.load_folder(folder, limit=10)
+    mail_list = mail_manager.load_folder(folder, number=10)
     send_email_list = [email_obj.EmailSchema().dump(single_mail) for single_mail in mail_list]
     return (flask.jsonify(send_email_list), 200)
