@@ -1,1 +1,13 @@
-<p>{{ this.inbox == null ? "null" : this.inbox.length }}</p>
+<h2>Inbox</h2>
+<div id="inbox_div">
+    @for (mail of inbox; track mail) {
+        <div class="email">
+            <h4>{{ mail.subject }}</h4>
+            <p>To: {{ mail.email_to }}</p>
+            <p>From: {{ mail.email_from }}</p>
+            <br />
+            <div class="overflow-y-scroll content-outer"><div class="overflow-y-scroll" [innerHTML]="mail.content"></div></div>
+            <br />
+        </div>
+    }
+</div>

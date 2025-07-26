@@ -33,8 +33,6 @@ export class LoginComponent {
   }
 
   loginUser(response : any) : void {
-    alert(response)
-    alert(response['token'])
     localStorage.setItem('token', response['token']);
     this.userService.setCurrentUser(response['user'] as IUser);
   }
