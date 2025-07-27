@@ -1,0 +1,13 @@
+.content-outer {
+    max-height: 20em;
+    overflow: auto;
+    border: solid lightgray 1px;
+    border-radius: 0.5em;
+}
+
+.email {
+    padding: 2em;
+    margin: 1em;
+    border-radius: 1em;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px; //https://getcssscan.com/css-box-shadow-examples #3
+}

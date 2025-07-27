@@ -3,11 +3,12 @@ import { UserService } from '../services/user/user.service';
 import { MailAPI } from '../entities/mail/mail-api.service';
 import { IMail } from '../entities/mail/mail.model';
 import { IUser } from '../entities/user/user.model';
+import { EmailComponent } from "../email/email.component";
 
 @Component({
   selector: 'app-inbox-test',
   standalone: true,
-  imports: [],
+  imports: [EmailComponent],
   templateUrl: './inbox-test.component.html',
   styleUrl: './inbox-test.component.scss'
 })
