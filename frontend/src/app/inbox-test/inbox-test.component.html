@@ -9,8 +9,8 @@
         </div>
         <div class="col-10 h-100">
             @if (this.isLoading === true) {
-                <div class="loading_div">
-                    <h4>Loading... Please Wait</h4>
+                <div style="display: flex; align-items: center; justify-content: center; padding-top: 2em;">
+                    <fa-icon id="spinner" [icon]="faSpinner" [animation]="'spin-pulse'" [size]="'2xl'"></fa-icon>
                 </div>
             }
             @else {

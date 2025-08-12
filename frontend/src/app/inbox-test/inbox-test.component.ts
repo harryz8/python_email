@@ -4,11 +4,14 @@ import { MailAPI } from '../entities/mail/mail-api.service';
 import { IMail } from '../entities/mail/mail.model';
 import { IUser } from '../entities/user/user.model';
 import { EmailComponent } from "../email/email.component";
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { SizeProp } from '@fortawesome/angular-fontawesome';
 
 @Component({
   selector: 'app-inbox-test',
   standalone: true,
-  imports: [EmailComponent],
+  imports: [EmailComponent, FontAwesomeModule],
   templateUrl: './inbox-test.component.html',
   styleUrl: './inbox-test.component.scss'
 })
@@ -20,6 +23,7 @@ export class InboxTestComponent implements OnInit {
   inbox : IMail[] | null = null;
   isLoading = false;
   the_user : IUser | null = null;
+  faSpinner = faSpinner;
 
   ngOnInit(): void {
       this.isLoading = true;
