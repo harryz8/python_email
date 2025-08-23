@@ -2,7 +2,6 @@ import smtplib
 import email
 import imaplib
 from src.entities import email_obj
-import quopri
 
 class Mail:
     _email_add = ""
@@ -46,21 +45,34 @@ class Mail:
         else:
             mail_ids = mail_ids[first:]
         for id_each in mail_ids:
-            status, data = mail.fetch(id_each, '(RFC822)') #'(RFC822)' is the whole raw message
-            for each_tuple in data:
-                if isinstance(each_tuple, tuple):
+            email = self.get_email(int(id_each), folder)
+            if isinstance(email, email_obj.Email):
+                emails.append(email)
+        return emails
+    
+
+    def get_email(self, email_id : int, folder : str = "inbox") -> email_obj.Email | None:
+        mail = imaplib.IMAP4_SSL(self._imap_server)
+        mail.login(self._email_add, self._password)
+        mail.select(folder)
+        mail.search(None, 'ALL')
+        status, data = mail.fetch(str(email_id), '(RFC822)')
+        for each_tuple in data:
+            if isinstance(each_tuple, tuple):
                     msg = email.message_from_bytes(each_tuple[1])
                     msg_body: str = ''
                     if msg.is_multipart():
                         for part in msg.get_payload():
+                            charset = part.get_content_charset()
                             if part.get_content_type() == 'text/html':
-                                msg_body += part.get_payload()
+                                msg_body += part.get_payload(decode=True).decode(charset)
                     else:
                         if (msg.get_content_type() == 'text/html'):
-                            msg_body = msg.get_payload()
-                    decoded_msg_body = quopri.decodestring(msg_body).decode('utf-8')
-                    emails.append(email_obj.Email(decoded_msg_body, msg))
-        return emails
+                            charset = msg.get_content_charset()
+                            msg_body = msg.get_payload(decode=True).decode(charset)
+                    decoded_msg_body = msg_body #quopri.decodestring(msg_body.encode('windows-1252')).decode('windows-1252') #https://www.paubox.com/blog/what-is-quoted-printable-encoding
+                    return email_obj.Email(email_id, decoded_msg_body, msg)
+        return None
 
 
 if __name__ == "__main__":
