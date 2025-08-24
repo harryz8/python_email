@@ -15,9 +15,9 @@
             }
             @else {
                 <div class="inbox-outer">
-                    <div id="inbox_div" style="width: 98%">
+                    <div id="inbox-div" style="width: 98%">
                         @for (mail of inbox; track mail) {
-                            <app-email [mail] = "mail"></app-email>
+                            <div><app-email [mail] = "mail"></app-email></div>
                         }
                     </div>
                 </div>

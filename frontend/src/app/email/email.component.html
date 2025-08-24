@@ -1,13 +1,11 @@
 @if (mail) {
-    <div class="container-fluid email">
+    <div (click)="openModal()" class="container-fluid email">
         <div class="row">
             <div class="col-md-11"><h4>{{ mail.subject }}</h4></div>
             <div class="col-md-1 justify-content-end" style="display: flex;">
-                <div (click)="openModal()"><fa-icon [icon]="faUpRightAndDownLeftFromCenter"></fa-icon></div>
+                <div><fa-icon [icon]="faUpRightAndDownLeftFromCenter"></fa-icon></div>
             </div>
         </div>
-        <div class="row"><p>To: {{ mail.email_to }}</p></div>
         <div class="row"><p>From: {{ mail.email_from }}</p></div>
-        <div class="row content-outer"><div class="content-inner" [innerHTML]="mail.content"></div></div>
     </div>
 }

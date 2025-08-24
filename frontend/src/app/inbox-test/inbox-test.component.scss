@@ -10,6 +10,20 @@
     overflow: auto;
 }
 
+#inbox-div {
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    margin: 1em;
+    border-radius: 1em;
+}
+
 #spinner {
     color: rgb(121, 32, 0);
+}
+
+#inbox-div div {
+    border-bottom: 1px solid #d1d1d1;
+}
+
+#inbox-div div:last-child {
+    border-bottom: 0;
 }
