@@ -47,7 +47,7 @@ class SecureUser():
         self.username = user.username
         self.password = ''
         self.email_address = user.email_address
-        self.email_password = user.email_password
+        self.email_password = ''
         self.smtp_server = user.smtp_server
         self.smtp_port = user.smtp_port
         self.imap_server = user.imap_server

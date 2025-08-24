@@ -90,7 +90,7 @@ def get_all_emails(folder="inbox"):
     session = entity.Session()
     the_user = session.query(user.User).filter_by(id=get_jwt_identity()).first()
     mail_manager = Mail(the_user.email_address, the_user.email_password, the_user.smtp_server, the_user.smtp_port, the_user.imap_server)
-    mail_list = mail_manager.load_folder(folder, number=30)
+    mail_list = mail_manager.load_folder(folder, number=None)
     send_email_list = [email_obj.EmailSchema().dump(single_mail) for single_mail in mail_list]
     return (flask.jsonify(send_email_list), 200)
 

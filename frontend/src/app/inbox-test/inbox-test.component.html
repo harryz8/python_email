@@ -6,6 +6,7 @@
                     {{ the_user.username }}'s 
                 }Inbox
             </h1>
+            <p>{{inbox?.length}}</p>
         </div>
         <div class="col-10 h-100">
             @if (this.isLoading === true) {

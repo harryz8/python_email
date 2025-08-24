@@ -2,6 +2,7 @@ import smtplib
 import email
 import imaplib
 from src.entities import email_obj
+import threading
 
 class Mail:
     _email_add = ""
@@ -9,6 +10,9 @@ class Mail:
     _smtp_server = ""
     _smtp_port = 0
     _imap_server = ""
+    inbox_emails: list[email_obj.Email] = []
+    _inbox_emails_threading_lock = threading.Lock()
+    _mail_server_lock = threading.Lock()
 
     def __init__(self, your_email_address : str, your_password : str, smtp_server : str, smtp_port : int, imap_server : str):
         self._email_add = your_email_address
@@ -16,6 +20,8 @@ class Mail:
         self._smtp_server = smtp_server
         self._smtp_port = smtp_port
         self._imap_server = imap_server
+        self.mail = imaplib.IMAP4_SSL(self._imap_server)
+        self.mail.login(self._email_add, self._password)
 
 
     def send(self, to_email : list[str], subject : str, body : str):
@@ -32,31 +38,31 @@ class Mail:
 
 
     def load_folder(self, folder: str = "inbox", first : int = 0, number : int | None = None) -> list[email_obj.Email]:
-        emails: list[email_obj.Email] = []
-        mail = imaplib.IMAP4_SSL(self._imap_server)
-        mail.login(self._email_add, self._password)
-        mail.select(folder)
-        status, data = mail.search(None, 'ALL')
+        self.mail.select(folder)
+        status, data = self.mail.search(None, 'ALL')
         mail_ids = []
+        self.inbox_emails = []
         for block in data:
             mail_ids += block.split()
         if (number != None):
             mail_ids = mail_ids[first:first+number]
         else:
             mail_ids = mail_ids[first:]
+        threads = {}
         for id_each in mail_ids:
-            email = self.get_email(int(id_each), folder)
-            if isinstance(email, email_obj.Email):
-                emails.append(email)
-        return emails
+            threads[id_each] = threading.Thread(target=self.get_email, args=(int(id_each), folder, True))
+            threads[id_each].start()
+        for id_each in mail_ids:
+            threads[id_each].join()
+        return self.inbox_emails
     
 
-    def get_email(self, email_id : int, folder : str = "inbox") -> email_obj.Email | None:
-        mail = imaplib.IMAP4_SSL(self._imap_server)
-        mail.login(self._email_add, self._password)
-        mail.select(folder)
-        mail.search(None, 'ALL')
-        status, data = mail.fetch(str(email_id), '(RFC822)')
+    def get_email(self, email_id : int, folder : str = "inbox", is_thread = False) -> email_obj.Email | None:
+        self._mail_server_lock.acquire()
+        self.mail.select(folder)
+        self.mail.search(None, 'ALL')
+        status, data = self.mail.fetch(str(email_id), '(RFC822)')
+        self._mail_server_lock.release()
         for each_tuple in data:
             if isinstance(each_tuple, tuple):
                     msg = email.message_from_bytes(each_tuple[1])
@@ -70,9 +76,18 @@ class Mail:
                         if (msg.get_content_type() == 'text/html'):
                             charset = msg.get_content_charset()
                             msg_body = msg.get_payload(decode=True).decode(charset)
-                    decoded_msg_body = msg_body #quopri.decodestring(msg_body.encode('windows-1252')).decode('windows-1252') #https://www.paubox.com/blog/what-is-quoted-printable-encoding
-                    return email_obj.Email(email_id, decoded_msg_body, msg)
+                    if (is_thread):
+                        self._inbox_emails_threading_lock.acquire()
+                        self.inbox_emails.append(email_obj.Email(email_id, msg_body, msg))
+                        self._inbox_emails_threading_lock.release()
+                        return None
+                    else:
+                        return email_obj.Email(email_id, msg_body, msg)
         return None
+            
+
+    def close(self):
+        self.mail.close()
 
 
 if __name__ == "__main__":

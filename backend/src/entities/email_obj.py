@@ -17,9 +17,18 @@ class Email():
     subject = None
     content = None
     def __init__(self, email_id : int, l_content : str, l_email : email.message.Message):
-        decoded_from = decode_header(l_email['From'])[0]
-        decoded_to = decode_header(l_email['To'])[0]
-        decoded_subject = decode_header(l_email['Subject'])[0]
+        l_from = l_email['From']
+        if l_from == None:
+            l_from = ""
+        l_to = l_email['To']
+        if l_to == None:
+            l_to = ""
+        l_subject = l_email['Subject']
+        if l_subject == None:
+            l_subject = ""
+        decoded_from = decode_header(l_from)[0]
+        decoded_to = decode_header(l_to)[0]
+        decoded_subject = decode_header(l_subject)[0]
         if isinstance(decoded_from, bytes):
             for decoded_email_from, from_charset in [decoded_from]:
                 self.email_from = decoded_email_from.decode(from_charset)
