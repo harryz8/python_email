@@ -2,6 +2,7 @@ import smtplib
 import email
 import imaplib
 from src.entities import email_obj
+from email.parser import HeaderParser
 
 class Mail:
     _email_add = ""
@@ -48,6 +49,26 @@ class Mail:
             email = self.get_email(int(id_each), folder)
             if isinstance(email, email_obj.Email):
                 emails.append(email)
+        return emails
+    
+
+    def get_topline_folder(self, folder: str = "inbox"):
+        emails: list[email_obj.Email] = []
+        mail = imaplib.IMAP4_SSL(self._imap_server)
+        mail.login(self._email_add, self._password)
+        mail.select(folder)
+        status, data = mail.search(None, 'All')
+        mail_ids = []
+        for block in data:
+            mail_ids += block.split()
+        for id_each in mail_ids:
+            the_id = int(id_each)
+            if (the_id > 0):
+                status, data2 = mail.fetch(str(the_id), '(BODY.PEEK[HEADER])')
+                for each_tuple in data2:
+                    if isinstance(each_tuple, tuple):
+                        msg = email.message_from_bytes(each_tuple[1])
+                        emails.append(email_obj.Email(the_id, None, msg))
         return emails
     
 
