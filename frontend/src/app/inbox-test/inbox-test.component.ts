@@ -27,7 +27,7 @@ export class InboxTestComponent implements OnInit {
 
   ngOnInit(): void {
       this.isLoading = true;
-      this.mailService.getFolder("inbox").subscribe(mail => this.finished(mail.body!));
+      this.mailService.getFolderTopline("inbox").subscribe(mail => this.finished(mail.body!));
       this.userService.currentUser.subscribe(cur_user => this.the_user = cur_user);
   }
 

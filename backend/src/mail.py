@@ -57,6 +57,26 @@ class Mail:
         return self.inbox_emails
     
 
+    def get_topline_folder(self, folder: str = "inbox"):
+        emails: list[email_obj.Email] = []
+        self._mail_server_lock.acquire()
+        self.mail.select(folder)
+        status, data = self.mail.search(None, 'All')
+        mail_ids = []
+        for block in data:
+            mail_ids += block.split()
+        for id_each in mail_ids:
+            the_id = int(id_each)
+            if (the_id > 0):
+                status, data2 = self.mail.fetch(str(the_id), '(BODY.PEEK[HEADER])')
+                for each_tuple in data2:
+                    if isinstance(each_tuple, tuple):
+                        msg = email.message_from_bytes(each_tuple[1])
+                        emails.append(email_obj.Email(the_id, None, msg))
+        self._mail_server_lock.release()
+        return emails
+    
+
     def get_email(self, email_id : int, folder : str = "inbox", is_thread = False) -> email_obj.Email | None:
         self._mail_server_lock.acquire()
         self.mail.select(folder)

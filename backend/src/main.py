@@ -102,3 +102,13 @@ def get_email(email_id : int,folder="inbox"):
     mail_manager = Mail(the_user.email_address, the_user.email_password, the_user.smtp_server, the_user.smtp_port, the_user.imap_server)
     email = mail_manager.get_email(email_id, folder)
     return (flask.jsonify(email_obj.EmailSchema().dump(email)), 200)
+
+@app.route('/api/load-emails/topline/<folder>', methods=['GET'])
+@jwt_required()
+def get_all_emails_topline(folder="inbox"):
+    session = entity.Session()
+    the_user = session.query(user.User).filter_by(id=get_jwt_identity()).first()
+    mail_manager = Mail(the_user.email_address, the_user.email_password, the_user.smtp_server, the_user.smtp_port, the_user.imap_server)
+    mail_list = mail_manager.get_topline_folder(folder)
+    send_email_list = [email_obj.EmailSchema().dump(single_mail) for single_mail in mail_list]
+    return (flask.jsonify(send_email_list), 200)
