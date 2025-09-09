@@ -47,12 +47,12 @@ export class MailAPI implements OnInit {
     .pipe();
   }
 
-  getEmail(folder : string, id : number) : Observable<HttpResponse<IMail>> {
+  getEmail(folder : string, email_id : number) : Observable<HttpResponse<IMail>> {
     let the_token = localStorage.getItem("token");
     if (the_token == null) {
       the_token = "";
     }
-    return this.http.get<IMail>(`${API_URL}/api/load-emails/${folder}/${id}`, {observe: 'response', withCredentials: true, headers: new HttpHeaders({
+    return this.http.get<IMail>(`${API_URL}/api/load-emails/${folder}/${email_id}`, {observe: 'response', withCredentials: true, headers: new HttpHeaders({
       Authorization: `Bearer ${the_token}`
     })}).pipe();
   }

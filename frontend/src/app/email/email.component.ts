@@ -22,7 +22,8 @@ export class EmailComponent {
 
   openModal() {
     const the_modal = this.modalService.open(EmailModalComponent, { animation: false, size: 'xl' });
-    the_modal.componentInstance.mail = this.mail;
+    the_modal.componentInstance.mail_id = this.mail?.id;
+    the_modal.componentInstance.folder = "inbox";
   }
 
 }

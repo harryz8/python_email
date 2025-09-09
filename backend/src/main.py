@@ -94,7 +94,7 @@ def get_all_emails(folder="inbox"):
     send_email_list = [email_obj.EmailSchema().dump(single_mail) for single_mail in mail_list]
     return (flask.jsonify(send_email_list), 200)
 
-@app.route('/api/load-emails/<folder>/<id>', methods=['GET'])
+@app.route('/api/load-emails/<folder>/<email_id>', methods=['GET'])
 @jwt_required()
 def get_email(email_id : int,folder="inbox"):
     session = entity.Session()

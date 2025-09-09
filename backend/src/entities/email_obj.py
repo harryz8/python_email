@@ -1,4 +1,4 @@
-from marshmallow import Schema, fields, pre_dump
+from marshmallow import Schema, fields
 import email
 from email.header import decode_header
 
