@@ -32,7 +32,17 @@ export class InboxTestComponent implements OnInit {
   }
 
   finished(mail : IMail[]) {
-    this.inbox = mail;
+    this.inbox = mail.sort((mail1, mail2) => {
+      let date1 = new Date(mail1.date);
+      let date2 = new Date(mail2.date);
+      if (date1 > date2) {
+        return -1;
+      }
+      if (date2 > date1) {
+        return 1;
+      }
+      return 0;
+    });
     this.isLoading = false;
   }
 

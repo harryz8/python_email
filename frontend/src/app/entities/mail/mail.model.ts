@@ -4,4 +4,5 @@ export interface IMail {
   email_to : string;
   subject : string;
   content : string;
+  date : string;
 }

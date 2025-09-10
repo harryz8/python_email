@@ -57,7 +57,7 @@ class Mail:
         return self.inbox_emails
     
 
-    def get_topline_folder(self, folder: str = "inbox"):
+    def get_topline_folder(self, folder: str = "inbox") -> list[email_obj.Email]:
         emails: list[email_obj.Email] = []
         self._mail_server_lock.acquire()
         self.mail.select(folder)

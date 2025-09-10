@@ -8,6 +8,7 @@ class EmailSchema(Schema):
     email_to = fields.String()
     subject = fields.String()
     content = fields.String()
+    date = fields.String()
 
 
 class Email():
@@ -16,6 +17,7 @@ class Email():
     email_to = '' 
     subject = ''
     content = ''
+    date = ''
     def __init__(self, email_id : int, l_content : str | None, l_email : email.message.Message):
         if (l_email['From'] != None):
             decoded_from = decode_header(l_email['From'])[0]
@@ -56,6 +58,8 @@ class Email():
                 if (charset == None):
                         charset = 'utf-8'
                 self.subject = decoded_subject[0].encode(charset).decode('utf-8', errors='replace')
+        if (l_email['Date'] != None):
+             self.date = decode_header(l_email['Date'])[0][0]
         if (l_content != None):
             self.content = l_content
         self.id = email_id

@@ -2,11 +2,13 @@ import { Component, inject, Input, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { IMail } from '../entities/mail/mail.model';
 import { MailAPI } from '../entities/mail/mail-api.service';
+import { faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @Component({
   selector: 'app-email-modal',
   standalone: true,
-  imports: [],
+  imports: [FontAwesomeModule],
   templateUrl: './email-modal.component.html',
   styleUrl: './email-modal.component.scss'
 })
@@ -18,6 +20,7 @@ export class EmailModalComponent implements OnInit {
   @Input() folder : string | null = null;
   mail : IMail | null = null;
   isLoading = false;
+  faSpinner = faSpinner;
 
   constructor(public activeModal : NgbActiveModal) {
   }

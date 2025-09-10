@@ -6,6 +6,9 @@
                 <div><fa-icon [icon]="faUpRightAndDownLeftFromCenter"></fa-icon></div>
             </div>
         </div>
+        @if (this.date !== null) {
+            <div class="row"><p>{{ this.date | date : 'd/M/yy, h:mm a' }}</p></div>
+        }
         <div class="row"><p>From: {{ mail.email_from }}</p></div>
     </div>
 }

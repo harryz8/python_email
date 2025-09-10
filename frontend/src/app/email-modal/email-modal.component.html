@@ -11,6 +11,15 @@
     </div>
   </div>
 }
+@else {
+  @if (this.isLoading === true) {
+    <div class="modal-body">
+      <div style="display: flex; align-items: center; justify-content: center; padding-top: 2em;">
+          <fa-icon id="spinner" [icon]="faSpinner" [animation]="'spin-pulse'" [size]="'2xl'"></fa-icon>
+      </div>
+    </div>
+  }
+}
 <div class="modal-footer">
   <button type="button" class="btn btn-outline-dark" (click)="activeModal.close('Close click')">Close</button>
 </div>
