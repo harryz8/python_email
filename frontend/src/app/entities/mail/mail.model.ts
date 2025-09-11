@@ -5,4 +5,8 @@ export interface IMail {
   subject : string;
   content : string;
   date : string;
+  seen : boolean;
+  answered : boolean;
+  flagged : boolean;
+  draft : boolean;
 }

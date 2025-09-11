@@ -6,7 +6,9 @@
                     {{ the_user.username }}'s 
                 }Inbox
             </h1>
-            <p>{{inbox?.length}} emails</p>
+            @if (inbox !== null) {
+                <p>{{inbox.length}} emails</p>
+            }
         </div>
         <div class="col-10 h-100">
             @if (this.isLoading === true) {
@@ -16,9 +18,9 @@
             }
             @else {
                 <div class="inbox-outer">
-                    <div id="inbox-div" style="width: 98%">
+                    <div id="inbox-div">
                         @for (mail of inbox; track mail) {
-                            <div><app-email [mail] = "mail"></app-email></div>
+                            <div style="cursor: pointer;" [ngClass]="{'seen': mail.seen === true, 'unseen': mail.seen === false}"><app-email [mail] = "mail"></app-email></div>
                         }
                     </div>
                 </div>

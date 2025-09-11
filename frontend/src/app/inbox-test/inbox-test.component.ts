@@ -6,12 +6,12 @@ import { IUser } from '../entities/user/user.model';
 import { EmailComponent } from "../email/email.component";
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
-import { SizeProp } from '@fortawesome/angular-fontawesome';
+import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-inbox-test',
   standalone: true,
-  imports: [EmailComponent, FontAwesomeModule],
+  imports: [EmailComponent, FontAwesomeModule, NgClass],
   templateUrl: './inbox-test.component.html',
   styleUrl: './inbox-test.component.scss'
 })

@@ -9,6 +9,10 @@ class EmailSchema(Schema):
     subject = fields.String()
     content = fields.String()
     date = fields.String()
+    seen = fields.Boolean()
+    answered = fields.Boolean()
+    flagged = fields.Boolean()
+    draft = fields.Boolean()
 
 
 class Email():
@@ -18,7 +22,11 @@ class Email():
     subject = ''
     content = ''
     date = ''
-    def __init__(self, email_id : int, l_content : str | None, l_email : email.message.Message):
+    seen = False
+    answered = False
+    flagged = False
+    draft = False
+    def __init__(self, email_id : int, l_content : str | None, l_email : email.message.Message, flags : str):
         if (l_email['From'] != None):
             decoded_from = decode_header(l_email['From'])[0]
             if isinstance(decoded_from[0], bytes):
@@ -59,7 +67,15 @@ class Email():
                         charset = 'utf-8'
                 self.subject = decoded_subject[0].encode(charset).decode('utf-8', errors='replace')
         if (l_email['Date'] != None):
-             self.date = decode_header(l_email['Date'])[0][0]
+            self.date = decode_header(l_email['Date'])[0][0]
         if (l_content != None):
             self.content = l_content
         self.id = email_id
+        if ("\\Seen" in flags):
+            self.seen = True
+        if ("\\Answered" in flags):
+            self.answered = True
+        if ("\\Flagged" in flags):
+            self.flagged = True
+        if ("\\Draft" in flags):
+            self.draft = True
