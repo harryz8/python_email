@@ -47,6 +47,17 @@ export class MailAPI implements OnInit {
     .pipe();
   }
 
+  getFolderToplineAfter(folder : string, after : string, before : string) : Observable<HttpResponse<IMail[]>> {
+    let the_token = localStorage.getItem("token");
+    if (the_token == null) {
+      the_token = "";
+    }
+    return this.http.get<IMail[]>(`${API_URL}/api/load-emails/topline/${folder}/${after}/${before}`, {observe: 'response', withCredentials: true, headers: new HttpHeaders({
+      Authorization: `Bearer ${the_token}`
+    })})
+    .pipe();
+  }
+
   getEmail(folder : string, email_id : number) : Observable<HttpResponse<IMail>> {
     let the_token = localStorage.getItem("token");
     if (the_token == null) {

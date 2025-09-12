@@ -3,6 +3,7 @@ import email
 import imaplib
 from src.entities import email_obj
 import threading
+import time
 
 class Mail:
     _email_add = ""
@@ -38,6 +39,7 @@ class Mail:
 
 
     def load_folder(self, folder: str = "inbox", first : int = 0, number : int | None = None) -> list[email_obj.Email]:
+        start = time.time()
         self._mail_server_lock.acquire()
         self.mail.select(folder)
         status, data = self.mail.search(None, 'ALL')
@@ -56,18 +58,25 @@ class Mail:
             threads[id_each].start()
         for id_each in mail_ids:
             threads[id_each].join()
+        print(f"Emails on server in {time.time() - start}ms")
         return self.temp_emails
     
 
-    def get_topline_folder(self, folder: str = "inbox") -> list[email_obj.Email]:
+    def get_topline_folder(self, folder: str = "inbox", after: str | None = None, before: str | None = None) -> list[email_obj.Email]:
+        start = time.time()
         self.temp_emails = []
         self._mail_server_lock.acquire()
         self.mail.select(folder)
-        status, data = self.mail.search(None, 'All')
+        if (after == None or before == None):
+            status, data = self.mail.search(None, 'ALL')
+        else:
+            status, data = self.mail.search(None, f'(SINCE "{after}" BEFORE "{before}")')
         mail_ids = []
         for block in data:
             mail_ids += block.split()
         self._mail_server_lock.release()
+        mail_ids.reverse()
+        mail_ids = mail_ids[:100]
         threads = {}
         for id_each in mail_ids:
             the_id = int(id_each)
@@ -75,6 +84,7 @@ class Mail:
             threads[id_each].start()
         for id_each in mail_ids:
             threads[id_each].join()
+        print(f"Emails on server in {time.time() - start}ms")
         return self.temp_emails
     
     def __get_email_header(self, email_id: int , folder: str = "inbox") -> None:
@@ -92,8 +102,6 @@ class Mail:
                         flags += part.decode()
                 elif (isinstance(data2[0][0], bytes)):
                     flags = data2[0][0].decode()
-                else:
-                    print(type(data2[0][0]))
             if isinstance(data2[0], tuple):
                 msg = email.message_from_bytes(data2[0][1])
                 self.temp_emails.append(email_obj.Email(email_id, None, msg, flags))

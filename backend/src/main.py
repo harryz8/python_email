@@ -79,7 +79,6 @@ def register_user():
     session.add(new_user)
     session.commit()
     send_new_user = user.UserSchema().dump(user.SecureUser(new_user))
-    print(f"ID: {new_user.id}")
     session.close()
     return (flask.jsonify(send_new_user), 201)
 
@@ -110,5 +109,15 @@ def get_all_emails_topline(folder="inbox"):
     the_user = session.query(user.User).filter_by(id=get_jwt_identity()).first()
     mail_manager = Mail(the_user.email_address, the_user.email_password, the_user.smtp_server, the_user.smtp_port, the_user.imap_server)
     mail_list = mail_manager.get_topline_folder(folder)
+    send_email_list = [email_obj.EmailSchema().dump(single_mail) for single_mail in mail_list]
+    return (flask.jsonify(send_email_list), 200)
+
+@app.route('/api/load-emails/topline/<folder>/<after>/<before>', methods=['GET'])
+@jwt_required()
+def get_all_emails_topline_after(after, before, folder="inbox"):
+    session = entity.Session()
+    the_user = session.query(user.User).filter_by(id=get_jwt_identity()).first()
+    mail_manager = Mail(the_user.email_address, the_user.email_password, the_user.smtp_server, the_user.smtp_port, the_user.imap_server)
+    mail_list = mail_manager.get_topline_folder(folder, after, before)
     send_email_list = [email_obj.EmailSchema().dump(single_mail) for single_mail in mail_list]
     return (flask.jsonify(send_email_list), 200)

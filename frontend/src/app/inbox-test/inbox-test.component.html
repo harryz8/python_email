@@ -17,11 +17,22 @@
                 </div>
             }
             @else {
+                <h4 class="dates">{{ this.firstDate | date : 'dd MMM yyyy' }} - {{ this.lastDate | date : 'dd MMM yyyy' }}</h4>
                 <div class="inbox-outer">
                     <div id="inbox-div">
                         @for (mail of inbox; track mail) {
                             <div style="cursor: pointer;" [ngClass]="{'seen': mail.seen === true, 'unseen': mail.seen === false}"><app-email [mail] = "mail"></app-email></div>
                         }
+                    </div>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-6 centre d-flex">
+                                <button class="button" type="button" (click)="decWeek()">Previous Week</button>
+                            </div>
+                            <div class="col-6 centre d-flex">
+                                <button class="button" type="button" [disabled]="this.sameDay(this.lastDate, this.today)" (click)="incWeek()">Next Week</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             }

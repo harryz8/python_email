@@ -6,11 +6,15 @@
 }
 
 .inbox-outer {
-    height: 98%;
+    height: 94%;
     overflow: auto;
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
     margin: 1em;
     border-radius: 1em;
+}
+
+.dates {
+    margin: 1em;
 }
 
 #spinner {
@@ -21,10 +25,6 @@
     border-bottom: 1px solid #d1d1d1;
 }
 
-#inbox-div div:last-child {
-    border-bottom: 0;
-}
-
 .seen {
     background-color: #dedede;
 }
@@ -33,6 +33,26 @@
     background-color: white;
 }
 
-#inbox-div div :hover {
+#inbox-div :hover {
     background-color: #cccccc;
+}
+
+.centre {
+    align-items: center;
+    justify-content: center;
+}
+
+.button {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    background-color: white;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    border-radius: 1em;
+    padding: 0.5em;
+    border-width: 0;
+    font-size: 1.4em;
+}
+
+:disabled {
+    color: rgb(190, 190, 190);
 }
