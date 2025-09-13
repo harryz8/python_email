@@ -52,7 +52,7 @@ export class InboxTestComponent implements OnInit {
 
   sameDay(date1 : Date, dateStr2: string) : boolean {
     const date2 = new Date(dateStr2);
-    if (date1.getDay() !== date2.getDay()) {
+    if (date1.getDate() !== date2.getDate()) {
       return false;
     }
     if (date1.getMonth() !== date2.getMonth()) {

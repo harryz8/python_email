@@ -6,18 +6,17 @@
                     {{ the_user.username }}'s 
                 }Inbox
             </h1>
-            @if (inbox !== null) {
-                <p>{{inbox.length}} emails</p>
-            }
         </div>
-        <div class="col-10 h-100">
+        <div class="col-10 h-100" style="display: flex; flex-flow: column;">
             @if (this.isLoading === true) {
                 <div style="display: flex; align-items: center; justify-content: center; padding-top: 2em;">
                     <fa-icon id="spinner" [icon]="faSpinner" [animation]="'spin-pulse'" [size]="'2xl'"></fa-icon>
                 </div>
             }
             @else {
-                <h4 class="dates">{{ this.firstDate | date : 'dd MMM yyyy' }} - {{ this.lastDate | date : 'dd MMM yyyy' }}</h4>
+                <div class="dates">
+                    <h4>{{ this.firstDate | date : 'dd MMM yyyy' }} - {{ this.lastDate | date : 'dd MMM yyyy' }}</h4>
+                </div>
                 <div class="inbox-outer">
                     <div id="inbox-div">
                         @for (mail of inbox; track mail) {
