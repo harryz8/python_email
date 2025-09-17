@@ -20,7 +20,9 @@
                 <div class="inbox-outer">
                     <div id="inbox-div">
                         @for (mail of inbox; track mail) {
-                            <div style="cursor: pointer;" [ngClass]="{'seen': mail.seen === true, 'unseen': mail.seen === false}"><app-email [mail] = "mail"></app-email></div>
+                            <div [ngClass]="{'seen': mail.seen === true, 'unseen': mail.seen === false}">
+                                <app-email (seen_mail)="this.setSeen(mail, $event)" [mail] = "mail"></app-email>
+                            </div>
                         }
                     </div>
                     <div class="container">

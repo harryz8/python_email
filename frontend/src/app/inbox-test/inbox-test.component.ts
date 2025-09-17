@@ -80,4 +80,12 @@ export class InboxTestComponent implements OnInit {
     this.mailService.getFolderToplineAfter("inbox", this.datePipe.transform(this.firstDate, 'dd-MMM-yyyy')!, this.datePipe.transform(this.lastDate, 'dd-MMM-yyyy')!).subscribe(mail => this.finished(mail.body!));
   }
 
+  setSeen(mail : IMail, val : boolean) {
+    let element = this.inbox?.find(el => el.id = mail.id);
+    if (element) {
+      element.seen = val;
+    }
+    return
+  }
+
 }

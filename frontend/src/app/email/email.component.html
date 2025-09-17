@@ -1,14 +1,24 @@
 @if (mail) {
-    <div (click)="openModal()" class="container-fluid email">
+    <div class="container-fluid email">
         <div class="row">
-            <div class="col-md-11"><h4>{{ mail.subject }}</h4></div>
+            <div style="cursor: pointer;" (click)="openModal()" class="col-md-11"><h4>{{ mail.subject }}</h4></div>
             <div class="col-md-1 justify-content-end" style="display: flex;">
-                <div><fa-icon [icon]="faUpRightAndDownLeftFromCenter"></fa-icon></div>
+                <div class="option_ico flag_no"><fa-icon [icon]="faTrashCan"></fa-icon></div>
+                <div class="option_ico" style="cursor: pointer;" (click)="this.swapSeen()">
+                    @if (mail.seen) {
+                        <fa-icon [icon]="faEnvelopeOpen"></fa-icon>
+                    }
+                    @else {
+                        <fa-icon [icon]="faEnvelope"></fa-icon>
+                    }
+                </div>
+                <div class="option_ico" [ngClass]="{'flag_yes': mail.flagged, 'flag_no': !mail.flagged}"><fa-icon [icon]="faFlag"></fa-icon></div>
+                <div class="option_ico" style="cursor: pointer;" (click)="openModal()"><fa-icon [icon]="faUpRightAndDownLeftFromCenter"></fa-icon></div>
             </div>
         </div>
         @if (this.date !== null) {
-            <div class="row"><p>{{ this.date | date : 'd/M/yy, h:mm a' }}</p></div>
+            <div class="row" style="cursor: pointer;" (click)="openModal()"><p>{{ this.date | date : 'd/M/yy, h:mm a' }}</p></div>
         }
-        <div class="row"><p>From: {{ mail.email_from }}</p></div>
+        <div class="row" style="cursor: pointer;" (click)="openModal()"><p>From: {{ mail.email_from }}</p></div>
     </div>
 }
