@@ -121,3 +121,16 @@ def get_all_emails_topline_after(after, before, folder="inbox"):
     mail_list = mail_manager.get_topline_folder(folder, after, before)
     send_email_list = [email_obj.EmailSchema().dump(single_mail) for single_mail in mail_list]
     return (flask.jsonify(send_email_list), 200)
+
+@app.route('/api/<email_id>/flags/read', methods=['PUT'])
+@jwt_required()
+def set_email_read(email_id):
+    value = flask.request.get_json()
+    session = entity.Session()
+    the_user = session.query(user.User).filter_by(id=get_jwt_identity()).first()
+    mail_manager = Mail(the_user.email_address, the_user.email_password, the_user.smtp_server, the_user.smtp_port, the_user.imap_server)
+    if (value["read"].lower() == "true"):
+        mail_manager.add_email_flag(email_id, flag='\\Seen')
+    else:
+        mail_manager.remove_email_flag(email_id, flag='\\Seen')
+    return flask.jsonify({"message" : "Data recieved", "data" : value}), 200

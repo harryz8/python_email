@@ -1,7 +1,7 @@
 import { inject, Injectable, OnInit } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { API_URL } from '../../env';
-import { Observable, throwError } from 'rxjs';
+import { Observable, ObservedValueOf, throwError } from 'rxjs';
 import { IMail } from './mail.model';
 import { UserService } from '../../services/user/user.service';
 import { IUser } from '../user/user.model';
@@ -64,6 +64,16 @@ export class MailAPI implements OnInit {
       the_token = "";
     }
     return this.http.get<IMail>(`${API_URL}/api/load-emails/${folder}/${email_id}`, {observe: 'response', withCredentials: true, headers: new HttpHeaders({
+      Authorization: `Bearer ${the_token}`
+    })}).pipe();
+  }
+
+  setEmailReadFlag(email_id : number, flag_value : boolean) {
+    let the_token = localStorage.getItem("token");
+    if (the_token == null) {
+      the_token = "";
+    }
+    return this.http.put(`${API_URL}/api/${email_id}/flags/read`, {'read': flag_value.toString()}, {withCredentials: true, headers: new HttpHeaders({
       Authorization: `Bearer ${the_token}`
     })}).pipe();
   }

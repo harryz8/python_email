@@ -86,7 +86,8 @@ class Mail:
             threads[id_each].join()
         print(f"Emails on server in {time.time() - start}ms")
         return self.temp_emails
-    
+
+
     def __get_email_header(self, email_id: int , folder: str = "inbox") -> None:
         # Only use for threads
         if (email_id > 0):
@@ -106,6 +107,7 @@ class Mail:
                 msg = email.message_from_bytes(data2[0][1])
                 self.temp_emails.append(email_obj.Email(email_id, None, msg, flags))
         return None
+
 
     def get_email(self, email_id : int, folder : str = "inbox", is_thread = False) -> email_obj.Email | None:
         self._mail_server_lock.acquire()
@@ -141,7 +143,21 @@ class Mail:
                 else:
                     return email_obj.Email(email_id, msg_body, msg, flags)
         return None
-            
+    
+
+    def add_email_flag(self, email_id : int, flag : str, folder : str = "inbox"):
+        self._mail_server_lock.acquire()
+        self.mail.select(folder, readonly=False)
+        self.mail.store(str(email_id), '+FLAGS', flag)
+        self._mail_server_lock.release()
+
+    
+    def remove_email_flag(self, email_id : int, flag : str, folder : str = "inbox"):
+        self._mail_server_lock.acquire()
+        self.mail.select(folder, readonly=False)
+        self.mail.store(str(email_id), '-FLAGS', flag)
+        self._mail_server_lock.release()
+
 
     def close(self):
         self.mail.close()

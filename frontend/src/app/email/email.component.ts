@@ -5,6 +5,7 @@ import { faUpRightAndDownLeftFromCenter, faDownLeftAndUpRightToCenter, faFlag, f
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { EmailModalComponent } from '../email-modal/email-modal.component'
 import { DatePipe, NgClass } from '@angular/common';
+import { MailAPI } from '../entities/mail/mail-api.service';
 
 @Component({
   selector: 'app-email',
@@ -16,6 +17,7 @@ import { DatePipe, NgClass } from '@angular/common';
 export class EmailComponent implements OnInit {
 
   private modalService = inject(NgbModal);
+  private mailApiService = inject(MailAPI)
 
   @Input() mail : IMail | null = null;
   @Output() seen_mail = new EventEmitter<boolean>();
@@ -45,7 +47,7 @@ export class EmailComponent implements OnInit {
   openModal(): void {
     if (this.mail) {
       this.mail.seen = true;
-      this.seen_mail.emit(this.mail.seen);
+      // this.seen_mail.emit(this.mail.seen);
       const the_modal = this.modalService.open(EmailModalComponent, { animation: false, size: 'xl' });
       the_modal.componentInstance.mail_id = this.mail?.id;
       the_modal.componentInstance.folder = "inbox";
@@ -54,8 +56,9 @@ export class EmailComponent implements OnInit {
 
   swapSeen(): void {
     if (this.mail) {
-      this.mail.seen = !this.mail.seen;
-      this.seen_mail.emit(this.mail.seen);
+      this.mailApiService.setEmailReadFlag(this.mail.id, !this.mail.seen).subscribe({
+        next: (res:any) => {this.mail!.seen = !this.mail!.seen;}})
+      // this.seen_mail.emit(this.mail.seen);
     }
   }
 
