@@ -31,7 +31,7 @@ export class InboxTestComponent implements OnInit {
 
   ngOnInit(): void {
       this.isLoading = true;
-      this.mailService.getFolderToplineAfter("inbox", this.datePipe.transform(this.firstDate, 'dd-MMM-yyyy')!, this.datePipe.transform(this.lastDate, 'dd-MMM-yyyy')!).subscribe(mail => this.finished(mail.body!));
+      this.mailService.getFolderToplineAfter("inbox", this.datePipe.transform(new Date(this.firstDate.getTime() + 24*60*60*1000), 'dd-MMM-yyyy')!, this.datePipe.transform(new Date(this.lastDate.getTime() + 24*60*60*1000), 'dd-MMM-yyyy')!).subscribe(mail => this.finished(mail.body!));
       this.userService.currentUser.subscribe(cur_user => this.the_user = cur_user);
   }
 
@@ -69,7 +69,7 @@ export class InboxTestComponent implements OnInit {
     this.inbox = [];
     this.firstDate = new Date(this.firstDate.getTime() - 7 * 24 * 60 * 60 * 1000)
     this.lastDate = new Date(this.lastDate.getTime() - 7 * 24 * 60 * 60 * 1000)
-    this.mailService.getFolderToplineAfter("inbox", this.datePipe.transform(this.firstDate, 'dd-MMM-yyyy')!, this.datePipe.transform(this.lastDate, 'dd-MMM-yyyy')!).subscribe(mail => this.finished(mail.body!));
+    this.mailService.getFolderToplineAfter("inbox", this.datePipe.transform(new Date(this.firstDate.getTime() + 24*60*60*1000), 'dd-MMM-yyyy')!, this.datePipe.transform(new Date(this.lastDate.getTime() + 24*60*60*1000), 'dd-MMM-yyyy')!).subscribe(mail => this.finished(mail.body!));
   }
 
   incWeek() : void {
@@ -77,7 +77,7 @@ export class InboxTestComponent implements OnInit {
     this.inbox = [];
     this.firstDate = new Date(this.firstDate.getTime() + 7 * 24 * 60 * 60 * 1000)
     this.lastDate = new Date(this.lastDate.getTime() + 7 * 24 * 60 * 60 * 1000)
-    this.mailService.getFolderToplineAfter("inbox", this.datePipe.transform(this.firstDate, 'dd-MMM-yyyy')!, this.datePipe.transform(this.lastDate, 'dd-MMM-yyyy')!).subscribe(mail => this.finished(mail.body!));
+    this.mailService.getFolderToplineAfter("inbox", this.datePipe.transform(new Date(this.firstDate.getTime() + 24*60*60*1000), 'dd-MMM-yyyy')!, this.datePipe.transform(new Date(this.lastDate.getTime() + 24*60*60*1000), 'dd-MMM-yyyy')!).subscribe(mail => this.finished(mail.body!));
   }
 
   setSeen(mail : IMail, val : boolean) {

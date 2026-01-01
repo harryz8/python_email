@@ -28,6 +28,7 @@ export class EmailComponent implements OnInit {
   faEnvelope = faEnvelope;
   faEnvelopeOpen = faEnvelopeOpen;
   date : Date | null = null;
+  show = true;
 
   constructor() {
     if (this.mail) {
@@ -59,6 +60,14 @@ export class EmailComponent implements OnInit {
       this.mailApiService.setEmailReadFlag(this.mail.id, !this.mail.seen).subscribe({
         next: (res:any) => {this.mail!.seen = !this.mail!.seen;}})
       // this.seen_mail.emit(this.mail.seen);
+    }
+  }
+
+  deleteMessage(): void {
+    if (this.mail) {
+      this.mailApiService.setEmailDeletedFlag(this.mail.id).subscribe({
+        next: (res: any) => {this.show = false}
+      })
     }
   }
 

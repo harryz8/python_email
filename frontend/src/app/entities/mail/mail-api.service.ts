@@ -78,4 +78,14 @@ export class MailAPI implements OnInit {
     })}).pipe();
   }
 
+  setEmailDeletedFlag(email_id : number) {
+    let the_token = localStorage.getItem("token");
+    if (the_token == null) {
+      the_token = "";
+    }
+    return this.http.put(`${API_URL}/api/${email_id}/flags/deleted`, {}, {withCredentials: true, headers: new HttpHeaders({
+      Authorization: `Bearer ${the_token}`
+    })}).pipe();
+  }
+
 }
