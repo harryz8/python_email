@@ -12,7 +12,7 @@
                         <fa-icon [icon]="faEnvelope"></fa-icon>
                     }
                 </div>
-                <div class="option_ico" [ngClass]="{'flag_yes': mail.flagged, 'flag_no': !mail.flagged}"><fa-icon [icon]="faFlag"></fa-icon></div>
+                <div class="option_ico" style="cursor: pointer;" (click)="this.swapFlagged()" [ngClass]="{'flag_yes': mail.flagged, 'flag_no': !mail.flagged}"><fa-icon [icon]="faFlag"></fa-icon></div>
                 <div class="option_ico" style="cursor: pointer;" (click)="openModal()"><fa-icon [icon]="faUpRightAndDownLeftFromCenter"></fa-icon></div>
             </div>
         </div>

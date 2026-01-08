@@ -87,5 +87,4 @@ export class InboxTestComponent implements OnInit {
     }
     return
   }
-
 }

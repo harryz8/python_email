@@ -71,4 +71,11 @@ export class EmailComponent implements OnInit {
     }
   }
 
+  swapFlagged(): void {
+    if (this.mail) {
+      this.mailApiService.setEmailFlagFlag(this.mail.id, !this.mail.flagged).subscribe({
+        next: (res:any) => {this.mail!.flagged = !this.mail!.flagged;}})
+    }
+  }
+
 }

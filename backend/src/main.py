@@ -143,3 +143,16 @@ def set_email_to_be_deleted(email_id):
     mail_manager = Mail(the_user.email_address, the_user.email_password, the_user.smtp_server, the_user.smtp_port, the_user.imap_server)
     mail_manager.add_email_flag(email_id, flag='\\Deleted')
     return flask.jsonify({"message" : f"Message {email_id} set to be deleted."}), 200
+
+@app.route('/api/<email_id>/flags/flagged', methods=['PUT'])
+@jwt_required()
+def set_email_flagged(email_id):
+    value = flask.request.get_json()
+    session = entity.Session()
+    the_user = session.query(user.User).filter_by(id=get_jwt_identity()).first()
+    mail_manager = Mail(the_user.email_address, the_user.email_password, the_user.smtp_server, the_user.smtp_port, the_user.imap_server)
+    if (value["flagged"].lower() == "true"):
+        mail_manager.add_email_flag(email_id, flag='\\Flagged')
+    else:
+        mail_manager.remove_email_flag(email_id, flag='\\Flagged')
+    return flask.jsonify({"message" : "Data recieved", "data" : value}), 200
