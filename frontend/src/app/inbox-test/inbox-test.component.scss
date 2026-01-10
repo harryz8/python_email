@@ -7,15 +7,68 @@
 
 .inbox-outer {
     flex: 1 1 auto;
-    overflow: auto;
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
     margin: 1em;
     border-radius: 1em;
 }
 
+.inbox-outer > div :first-child {
+    border-radius: 1em 1em 0 0;
+}
+
+.inbox-outer > div :last-child {
+    border-radius: 0 0 1em 1em;
+}
+
+.content-inbox {
+    overflow: auto;
+}
+
+#date-toolbar {
+    width: 50%;
+    background-color: rgb(0, 75, 119);
+    color: white;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    border-radius: 1em;
+    border-width: 0;
+    font-size: 1.4em;
+}
+
+#sec1 {
+    border-radius: 1em 0 0 1em;
+    border-width: 0;
+    padding: 0.5em;
+}
+
+#sec2 {
+    border-radius: 0 1em 1em 0;
+    border-width: 0;
+    padding: 0.5em;
+}
+
+#date-toolbar > div :not(.dates):hover {
+    background-color: rgb(0, 42, 66);
+}
+
 .dates {
-    margin: 1em;
-    flex: 0 1 auto;
+    border-right: 1px solid white;
+    border-left: 1px solid white;
+}
+
+.dates :hover {
+    background-color: rgb(0, 75, 119) !important;
+}
+
+#date-toolbar button {
+    color: white;
+    border: 0px;
+    background-color: inherit;
+}
+
+.tac {
+    text-align: center;
 }
 
 #spinner {
@@ -55,5 +108,13 @@
 }
 
 :disabled {
-    color: rgb(190, 190, 190);
+    color: rgb(190, 190, 190) !important;
 }
+
+#new-email-container :hover {
+    background-color: #cccccc;
+}
+
+// #inc-week :disabled {
+//     color: rgb(44, 94, 122) !important;
+// }

@@ -1,25 +1,57 @@
-@if (mail) {
-  <div class="modal-header">
-    <h4>{{ mail.subject }}</h4>
-  </div>
+@if (this.isLoading === true) {
   <div class="modal-body">
-    <div class="container-fluid">
-        <div class="row"><p>To: {{ mail.email_to }}</p></div>
-        <div class="row"><p>From: {{ mail.email_from }}</p></div>
-        <div class="row"><hr /></div>
-        <div class="row content-outer"><div class="content-inner" [innerHTML]="mail.content"></div></div>
+    <div style="display: flex; align-items: center; justify-content: center; padding-top: 2em;">
+        <fa-icon id="spinner" [icon]="faSpinner" [animation]="'spin-pulse'" [size]="'2xl'"></fa-icon>
     </div>
   </div>
 }
 @else {
-  @if (this.isLoading === true) {
-    <div class="modal-body">
-      <div style="display: flex; align-items: center; justify-content: center; padding-top: 2em;">
-          <fa-icon id="spinner" [icon]="faSpinner" [animation]="'spin-pulse'" [size]="'2xl'"></fa-icon>
-      </div>
+  <div class="modal-header">
+    @if (mail_id && mail) {
+      <h4>{{ mail.subject }}</h4>
+    }
+    @else {
+      <h4>New Email</h4>
+    }
+  </div>
+  <div class="modal-body">
+    <div class="container-fluid">
+      <form #f="ngForm" (ngSubmit)="onSubmit()">
+        <div class="row">
+          @if (mail_id && mail) {
+            <p>To: {{ mail.email_to }}</p>
+          }
+          @else {
+            <label for="email_to">To: </label>
+            <input id="email_to" type="email" [(ngModel)]="mail.email_to" required />
+          }
+        </div>
+        <div class="row">
+          @if (mail_id && mail) {
+            <p>From: {{ mail.email_from }}</p>
+          }
+          @else {
+            <label for="subject">Subject: </label>
+            <input id="subject" type="text" [(ngModel)]="mail.subject" />
+          }
+        </div>
+        <div class="row"><hr /></div>
+        <div class="row content-outer">
+          @if (mail_id && mail) {
+            <div class="content-inner" [innerHTML]="mail.content"></div>
+          }
+          @else {
+            <textarea id="content" placeholder="Email content (text)..." [(ngModel)]="mail.content"></textarea>
+          }
+        </div>
+        @if (!(mail_id && mail)) {
+          <button type="submit"><fa-icon [icon]="faPaperPlane" [size]="'2xl'"></fa-icon></button>
+        }
+      </form>
     </div>
-  }
+  </div>
 }
+
 <div class="modal-footer">
   <button type="button" class="btn btn-outline-dark" (click)="activeModal.close('Close click')">Close</button>
 </div>

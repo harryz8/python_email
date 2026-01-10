@@ -10,3 +10,5 @@ export interface IMail {
   flagged : boolean;
   draft : boolean;
 }
+
+export type NewMail = Omit<IMail, "id">;

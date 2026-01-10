@@ -25,13 +25,14 @@ class Mail:
         self.mail.login(self._email_add, self._password)
 
 
-    def send(self, to_email : list[str], subject : str, body : str):
+    def send(self, to_email : list[str], subject : str, body : str, html_body : str):
         for i in to_email:
-            msg = email.message.EmailMesssage()
+            msg = email.mime.multipart.MIMEMultipart("alternative")
             msg['Subject'] = subject
             msg['From'] = self._email_add
             msg['To'] = i
-            msg.set_content(body)
+            msg.attach(body)
+            msg.attach(html_body)
             with smtplib.SMTP_SSL(self._smtp_server, self._smtp_port) as send_device:
                 send_device.login(self._email_add, self._password)
                 send_device.send_message(msg)

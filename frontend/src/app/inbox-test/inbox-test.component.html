@@ -1,21 +1,38 @@
 <div class="container-fluid w-100 h-100" id="inbox-test">
     <div class="row w-100 h-100">
         <div class="col-2 it_sidebar">
-            <h1>
-                @if (this.the_user) {
-                    {{ the_user.username }}'s 
-                }Inbox
-            </h1>
+            <div class="container-fluid">
+                <div class="row">
+                    <h1>
+                        @if (this.the_user) {
+                            {{ the_user.username }}'s 
+                        }Inbox
+                    </h1>
+                </div>
+                <div class="row" id="new-email-container">
+                    <button class="button" type="button" id="new-email"><h4><fa-icon [icon]="faPlus"></fa-icon>&#9;New Email</h4></button>
+                </div>
+            </div>
         </div>
-        <div class="col-10 h-100" style="display: flex; flex-flow: column;">
+        <div class="col-10 h-100 content-inbox" style="display: flex; flex-flow: column;">
             @if (this.isLoading === true) {
                 <div style="display: flex; align-items: center; justify-content: center; padding-top: 2em;">
                     <fa-icon id="spinner" [icon]="faSpinner" [animation]="'spin-pulse'" [size]="'2xl'"></fa-icon>
                 </div>
             }
             @else {
-                <div class="dates">
-                    <h4>{{ this.firstDate | date : 'dd MMM yyyy' }} - {{ this.lastDate | date : 'dd MMM yyyy' }}</h4>
+                <div id="date-toolbar" class="container sticky-top">
+                    <div class="row justify-content-lg-center align-items-center">
+                        <div id="sec1" class="col-lg-2 tac">
+                            <button type="button" (click)="decWeek()">Previous<br \>Week</button>
+                        </div>
+                        <div class="col-lg-8 dates justify-content-center align-items-center tac">
+                            <h4>{{ this.firstDate | date : 'dd MMM yyyy' }} - {{ this.lastDate | date : 'dd MMM yyyy' }}</h4>
+                        </div>
+                        <div id="sec2" class="col-lg-2 tac">
+                            <button id="inc-week" type="button" [disabled]="this.sameDay(this.lastDate, this.today)" (click)="incWeek()">Next<br \>Week</button>
+                        </div>
+                    </div>
                 </div>
                 <div class="inbox-outer">
                     <div id="inbox-div">
@@ -24,16 +41,6 @@
                                 <app-email (seen_mail)="this.setSeen(mail, $event)" [mail] = "mail"></app-email>
                             </div>
                         }
-                    </div>
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-6 centre d-flex">
-                                <button class="button" type="button" (click)="decWeek()">Previous Week</button>
-                            </div>
-                            <div class="col-6 centre d-flex">
-                                <button class="button" type="button" [disabled]="this.sameDay(this.lastDate, this.today)" (click)="incWeek()">Next Week</button>
-                            </div>
-                        </div>
                     </div>
                 </div>
             }

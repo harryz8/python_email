@@ -5,7 +5,7 @@ import { IMail } from '../entities/mail/mail.model';
 import { IUser } from '../entities/user/user.model';
 import { EmailComponent } from "../email/email.component";
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { faSpinner, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { DatePipe, NgClass } from '@angular/common';
 
 @Component({
@@ -24,6 +24,7 @@ export class InboxTestComponent implements OnInit {
   isLoading = false;
   the_user : IUser | null = null;
   faSpinner = faSpinner;
+  faPlus = faPlus;
   today = Date();
   firstDate = new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000)
   lastDate = new Date(this.today);
