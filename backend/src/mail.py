@@ -2,6 +2,7 @@ import smtplib
 import email
 import imaplib
 from src.entities import email_obj
+from email.mime.text import MIMEText
 import threading
 import time
 
@@ -25,18 +26,15 @@ class Mail:
         self.mail.login(self._email_add, self._password)
 
 
-    def send(self, to_email : list[str], subject : str, body : str, html_body : str):
-        for i in to_email:
-            msg = email.mime.multipart.MIMEMultipart("alternative")
-            msg['Subject'] = subject
-            msg['From'] = self._email_add
-            msg['To'] = i
-            msg.attach(body)
-            msg.attach(html_body)
-            with smtplib.SMTP_SSL(self._smtp_server, self._smtp_port) as send_device:
-                send_device.login(self._email_add, self._password)
-                send_device.send_message(msg)
-                send_device.quit()
+    def send(self, to_email : list[str], subject : str, body : str):
+        msg = MIMEText(body)
+        msg['Subject'] = subject
+        msg['From'] = self._email_add
+        msg['To'] = ", ".join(to_email)
+        with smtplib.SMTP_SSL(self._smtp_server, self._smtp_port) as send_device:
+            send_device.login(self._email_add, self._password)
+            send_device.send_message(msg)
+            send_device.quit()
 
 
     def load_folder(self, folder: str = "inbox", first : int = 0, number : int | None = None) -> list[email_obj.Email]:

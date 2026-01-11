@@ -156,3 +156,13 @@ def set_email_flagged(email_id):
     else:
         mail_manager.remove_email_flag(email_id, flag='\\Flagged')
     return flask.jsonify({"message" : "Data recieved", "data" : value}), 200
+
+@app.route('/api/send', methods=['POST'])
+@jwt_required()
+def send_email():
+    email = flask.request.get_json()
+    session = entity.Session()
+    the_user = session.query(user.User).filter_by(id=get_jwt_identity()).first()
+    mail_manager = Mail(the_user.email_address, the_user.email_password, the_user.smtp_server, the_user.smtp_port, the_user.imap_server)
+    mail_manager.send([email['email_to']], email['subject'], email['content'])
+    return flask.jsonify(email), 201

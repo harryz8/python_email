@@ -2,7 +2,7 @@ import { inject, Injectable, OnInit } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { API_URL } from '../../env';
 import { Observable, throwError } from 'rxjs';
-import { IMail } from './mail.model';
+import { IMail, MailClass, NewMail } from './mail.model';
 import { UserService } from '../../services/user/user.service';
 import { IUser } from '../user/user.model';
 
@@ -96,6 +96,16 @@ export class MailAPI implements OnInit {
     return this.http.put(`${API_URL}/api/${email_id}/flags/deleted`, {}, {withCredentials: true, headers: new HttpHeaders({
       Authorization: `Bearer ${the_token}`
     })}).pipe();
+  }
+
+  postEmail(newMail : NewMail): Observable<HttpResponse<any>> {
+    let the_token = localStorage.getItem("token");
+    if (the_token == null) {
+      the_token = "";
+    }
+    return this.http.post<IUser>(`${API_URL}/api/send`, newMail, {withCredentials: true, headers: new HttpHeaders({
+      Authorization: `Bearer ${the_token}`
+    }), observe: 'response'});
   }
 
 }

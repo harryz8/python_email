@@ -6,7 +6,9 @@ import { IUser } from '../entities/user/user.model';
 import { EmailComponent } from "../email/email.component";
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faSpinner, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DatePipe, NgClass } from '@angular/common';
+import { EmailModalComponent } from '../email-modal/email-modal.component';
 
 @Component({
   selector: 'app-inbox-test',
@@ -16,6 +18,8 @@ import { DatePipe, NgClass } from '@angular/common';
   styleUrl: './inbox-test.component.scss'
 })
 export class InboxTestComponent implements OnInit {
+
+  private modalService = inject(NgbModal);
 
   mailService = inject(MailAPI);
   userService = inject(UserService);
@@ -87,5 +91,9 @@ export class InboxTestComponent implements OnInit {
       element.seen = val;
     }
     return
+  }
+
+  openNewModal(): void {
+    const new_email_modal = this.modalService.open(EmailModalComponent, { animation: false, size: 'xl' });
   }
 }

@@ -1,17 +1,18 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit, ViewChild } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { IMail, NewMail } from '../entities/mail/mail.model';
+import { IMail, NewMail, MailClass } from '../entities/mail/mail.model';
 import { MailAPI } from '../entities/mail/mail-api.service';
 import { faPaperPlane, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../services/user/user.service';
 import { IUser } from '../entities/user/user.model';
+import { JsonPipe } from '@angular/common';
 
 @Component({
   selector: 'app-email-modal',
   standalone: true,
-  imports: [FontAwesomeModule, FormsModule],
+  imports: [FontAwesomeModule, FormsModule, JsonPipe],
   templateUrl: './email-modal.component.html',
   styleUrl: './email-modal.component.scss'
 })
@@ -24,16 +25,16 @@ export class EmailModalComponent implements OnInit {
   @Input() mail_id : number | null = null;
   @Input() folder : string | null = null;
   mail : NewMail = {
-    email_from : "",
-    email_to : "",
-    subject : "",
-    content : "",
-    date : (new Date(Date.now())).toISOString(),
-    seen : false,
-    answered : false,
-    flagged : false,
-    draft : false,
-  };
+      email_from : "",
+      email_to : "",
+      subject : "",
+      content : "",
+      date : (new Date(Date.now())).toISOString(),
+      seen : false,
+      answered : false,
+      flagged : false,
+      draft : false,
+    };
   isLoading = false;
   faSpinner = faSpinner;
   faPaperPlane = faPaperPlane;
@@ -48,6 +49,7 @@ export class EmailModalComponent implements OnInit {
       this.mailService.getEmail(this.folder, this.mail_id).subscribe(mail => this.finished(mail.body!));
     }
     else if (this.curUser !== null) {
+      this.isLoading = false;
       this.mail.email_from = this.curUser.email_address;
     }
   }
@@ -66,7 +68,10 @@ export class EmailModalComponent implements OnInit {
   }
 
   onSubmit() {
-
+    this.mailService.postEmail(this.mail).subscribe({
+      next: () => this.activeModal.close('Email sucessfully sent'),
+      error: () => alert("Server Error encountered: Please try again later.")
+    });
   }
 
 }
